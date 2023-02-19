@@ -2,7 +2,7 @@
 #define TRIDIAGONAL_MATRIX_TRIDIAGONALMATRIX_SOLVER_H
 
 #include <vector>
-#include "TridiagonalMatrix.h"
+#include "../Matrix/TridiagonalMatrix.h"
 
 template<typename T>
 std::vector<T> solver(const TridiagonalMatrix<T> &A, const std::vector<T> &d) {

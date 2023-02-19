@@ -4,21 +4,17 @@
 #include <vector>
 #include <iostream>
 
-template<typename T>
-struct Elements {
-    T a;
-    T b;
-    T c;
-
-    Elements(T a, T b, T c) : a(a), b(b), c(c) {};
-};
 
 template<typename T>
 class TridiagonalMatrix {
 private:
     int size_ = 0;
-    std::vector<Elements<T>> matrix_;
-
+    struct Elements {
+        T a;
+        T b;
+        T c;
+    };
+    std::vector<Elements> matrix_;
 public:
 
 
@@ -38,13 +34,13 @@ public:
             if (i % 3 == 0) b = it;
             if (i % 3 == 1) {
                 c = it;
-                matrix_.push_back(Elements<T>{a, b, c});
+                matrix_.push_back(Elements{a, b, c});
             }
             if (i % 3 == 2) a = it;
             i++;
         }
 
-        matrix_.push_back(Elements<T>{a, b, 0});
+        matrix_.push_back(Elements{a, b, 0});
     }
 
 
@@ -67,6 +63,8 @@ public:
     }
 
 };
+
+
 
 
 #endif

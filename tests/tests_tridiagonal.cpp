@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "TridiagonalMatrix_solver.h"
+#include "../src/Solvers/TridiagonalMatrix_solver.h"
 
 TEST(TRIDIAGONAL, INITIALIZATION) {
     std::initializer_list<double> in_list{4, 3, 2, 6, 7, 8, 5, 6, 4, 3.2, 2, 1, -2.9, 3, 4, 5, 6, 7, 8};
