@@ -25,12 +25,12 @@ private:
     std::vector<T> value_;
     std::vector<int> col_;
     std::vector<int> row_;
-    int row_num;
-    int col_num;
+    int h_; // height
+    int w_; // width
 
 public:
 
-    CSR(std::vector<DOK<T>> &elements_, int row_num, int col_num) : row_num(row_num), col_num(col_num) {
+    CSR(std::vector<DOK<T>> &elements_, int row_num, int col_num) : h_(row_num), w_(col_num) {
         std::sort(elements_.begin(), elements_.end());
         row_.reserve(row_num + 1);
         value_.reserve(elements_.size());
@@ -56,20 +56,20 @@ public:
 
     }
 
-    const T operator()(int i, int j) const {
-        if (i >= row_num || i < 0 || j >= col_num || j < 0) throw std::invalid_argument("no such position in matrix");
+    T operator()(int i, int j) const {
+        if (i >= h_ || i < 0 || j >= w_ || j < 0) throw std::invalid_argument("no such position in matrix");
         for (int k = 0; k < row_[i + 1] - row_[i]; k++) {
             if (col_[row_[i] + k] == j) return value_[row_[i] + k];
         }
         return 0;
     }
 
-    std::vector<T> &operator*(const std::vector<T> &mult_) {
+    std::vector<T> operator*(const std::vector<T> &mult_) {
         std::vector<T> result_;
-        result_.reserve(row_num);
-        for (int i = 0; i < row_num; i++) {
+        result_.reserve(h_);
+        for (int i = 0; i < h_; i++) {
             T sum = 0;
-            for (int j = 0; j < row_[i + 1] - row_[i]; j++) sum += value_[row_[i] + j] * mult_[col_[row_[i] + 1]];
+            for (int j = 0; j < row_[i + 1] - row_[i]; j++) sum += value_[row_[i] + j] * mult_[col_[row_[i] + j]];
             result_.push_back(sum);
         }
         return result_;
@@ -88,8 +88,8 @@ public:
     }
 
     friend std::ostream &operator<<(std::ostream &out, const CSR<T> &matrix) {
-        for (int i = 0; i < matrix.row_num; i++) {
-            for (int j = 0; j < matrix.col_num; j++) out << matrix(i, j) << " ";
+        for (int i = 0; i < matrix.h_; i++) {
+            for (int j = 0; j < matrix.w_; j++) out << matrix(i, j) << " ";
             out << "\n";
         }
         return out;

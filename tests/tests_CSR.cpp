@@ -89,11 +89,11 @@ TEST(SRC, MULTIPLICATION) {
     dok_.push_back({1, 3, 40});
     dok_.push_back({0, 0, 10});
     CSR<double> matrix_(dok_, 3, 4);
-
     std::vector<double> multip_{3, 2, 55, 1};
     std::vector<double> answer_{70, 100, 2810};
     std::vector<double> result_ = matrix_ * multip_;
     for (int i = 0; i < 3; i++) ASSERT_TRUE(answer_[i] == result_[i]);
+
 }
 
 
