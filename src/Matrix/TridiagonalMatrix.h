@@ -16,10 +16,6 @@ private:
     };
     std::vector<Elements> matrix_;
 public:
-
-
-    TridiagonalMatrix() = default;
-
     TridiagonalMatrix(int size_) : size_(size_) {
         matrix_.reserve(size_);
     }
@@ -44,7 +40,7 @@ public:
     }
 
 
-    const T operator()(int i, int j) const {
+    T operator()(int i, int j) const {
         if (j > i + 1 || j < i - 1) return 0;
 
         if (i == j) return matrix_[i].b;
@@ -52,7 +48,7 @@ public:
         return matrix_[i].c;
     }
 
-    const int Get_size() const { return size_; }
+    int Get_size() const { return size_; }
 
     friend std::ostream &operator<<(std::ostream &out, const TridiagonalMatrix<T> &matrix) {
         for (int i = 0; i < matrix.size_; i++) {
@@ -63,8 +59,6 @@ public:
     }
 
 };
-
-
 
 
 #endif

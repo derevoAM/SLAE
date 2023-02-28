@@ -7,6 +7,7 @@ enable_testing()
 
 add_subdirectory(src/Matrix)
 add_subdirectory(src/Solvers)
+add_subdirectory(src/Decompositions)
 add_subdirectory(tests)
 
 

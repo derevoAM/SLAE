@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+#include <cmath>
 
 template<typename T>
 class Dense {
@@ -14,17 +15,17 @@ public:
 
     T operator()(int i, int j) const { return matrix_[i * w_ + j]; }
 
-    const int get_height() { return h_; }
+    T &operator()(int i, int j) { return matrix_[i * w_ + j]; }
 
-    const int get_width() { return w_; }
+    int get_height() const { return h_; }
+
+    int get_width() const { return w_; }
 
     Dense<T> operator*(Dense<T> &mult_) {
-        if (mult_.h_ != w_) throw std::invalid_argument("invalid arguments: cannot multiply");
         std::vector<T> result_;
         result_.reserve(h_ * mult_.w_);
         for (int i = 0; i < h_; i++) {
-            for(int k = 0; k < mult_.w_; k ++)
-            {
+            for (int k = 0; k < mult_.w_; k++) {
                 T sum = 0;
                 for (int j = 0; j < w_; j++) sum += matrix_[i * w_ + j] * mult_(j, k);
                 result_.push_back(sum);
@@ -34,7 +35,6 @@ public:
     }
 
     Dense<T> operator+(Dense<T> &add_) {
-        if (add_.w_ != w_ || add_.h_ != h_) throw std::invalid_argument("invalid vector: cannot sum");
         std::vector<T> result_;
         result_.reserve(w_ * h_);
         for (int i = 0; i < h_; i++) {
@@ -43,6 +43,40 @@ public:
         return Dense<T>{h_, w_, result_};
     }
 
+    void Transpose() {
+        std::vector<T> trans_;
+        trans_.reserve(h_ * w_);
+        for (int i = 0; i < w_; i++) {
+            for (int j = 0; j < h_; j++) {
+                trans_.push_back(matrix_[j * w_ + i]);
+            }
+        }
+        std::swap(h_, w_);
+        matrix_ = trans_;
+    }
+
+    Dense<T> get_column(int j) {
+        std::vector<T> col_;
+        col_.reserve(h_);
+        for (int i = 0; i < h_; i++) col_.push_back(matrix_[i * w_ + j]);
+        return Dense<T>{h_, 1, col_};
+    }
+
+    double norm(Dense<T> &vec_) const // only for vectors
+    {
+        T sum = 0;
+        for (int i = 0; i < vec_.size(); i++) sum += vec_(i, 0) * vec_(i, 0);
+        return sqrt(static_cast<double>(sum));
+    }
+
+    Dense<T> &eval_norm_vec(int i) {
+        if (this(i, 0) >= 0) {
+            this(i, 0) += this->norm();
+        } else this(i, 0) -= this(i, 0) - this->norm();
+        double cur_norm = this->norm();
+        for (int j = 0; j < h_; j++) this(j, 0) /= cur_norm;
+        return this;
+    }
 
     friend std::ostream &operator<<(std::ostream &out, const Dense<T> &output_) {
         for (int i = 0; i < output_.h_; i++) {

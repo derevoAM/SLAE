@@ -57,7 +57,6 @@ public:
     }
 
     T operator()(int i, int j) const {
-        if (i >= h_ || i < 0 || j >= w_ || j < 0) throw std::invalid_argument("no such position in matrix");
         for (int k = 0; k < row_[i + 1] - row_[i]; k++) {
             if (col_[row_[i] + k] == j) return value_[row_[i] + k];
         }
@@ -75,15 +74,15 @@ public:
         return result_;
     }
 
-    T get_value(int i) {
+    T get_value(int i) const {
         return value_[i];
     }
 
-    int get_col(int i) {
+    int get_col(int i) const {
         return col_[i];
     }
 
-    int get_row(int i) {
+    int get_row(int i) const {
         return row_[i];
     }
 
