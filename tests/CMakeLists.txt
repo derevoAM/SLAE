@@ -6,6 +6,7 @@ project(SLAE)
 add_executable(test_trid tests_tridiagonal.cpp)
 add_executable(test_csr tests_CSR.cpp)
 add_executable(test_dense tests_dense.cpp)
+add_executable(test_householder tests_Householder.cpp)
 
 find_package(GTest REQUIRED)
 
@@ -21,5 +22,9 @@ target_link_libraries(test_dense
         PRIVATE
         GTest::GTest)
 
+target_link_libraries(test_householder
+        PRIVATE
+        GTest::GTest)
 
-add_test(gtests test_trid test_csr tests_dense.cpp)
+
+#add_test(gtests test_trid test_csr tests_dense.cpp)

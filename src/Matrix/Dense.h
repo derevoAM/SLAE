@@ -13,6 +13,10 @@ private:
 public:
     Dense(int h_, int w_, const std::vector<T> input_) : h_(h_), w_(w_), matrix_(input_) {};
 
+    Dense(int h_, int w_) : h_(h_), w_(w_) {
+        matrix_.resize(w_ * h_);
+    };
+
     T operator()(int i, int j) const { return matrix_[i * w_ + j]; }
 
     T &operator()(int i, int j) { return matrix_[i * w_ + j]; }
@@ -21,7 +25,7 @@ public:
 
     int get_width() const { return w_; }
 
-    Dense<T> operator*(Dense<T> &mult_) {
+    Dense<T> operator*(const Dense<T> &mult_) {
         std::vector<T> result_;
         result_.reserve(h_ * mult_.w_);
         for (int i = 0; i < h_; i++) {
@@ -34,7 +38,14 @@ public:
         return Dense<T>{h_, mult_.w_, result_};
     }
 
-    Dense<T> operator+(Dense<T> &add_) {
+    Dense<T> operator*(T mult_) {
+        std::vector<T> result_;
+        result_.reserve(h_ * w_);
+        for (int i = 0; i < h_; i++) for (int j = 0; j < w_; j++) result_.push_back(matrix_[i * w_ + j] * mult_);
+        return Dense<T>{h_, w_, result_};
+    }
+
+    Dense<T> operator+(const Dense<T> &add_) {
         std::vector<T> result_;
         result_.reserve(w_ * h_);
         for (int i = 0; i < h_; i++) {
@@ -43,7 +54,14 @@ public:
         return Dense<T>{h_, w_, result_};
     }
 
-    void Transpose() {
+    Dense<T> operator+=(const Dense<T> &add_) {
+        for (int i = 0; i < h_; i++) {
+            for (int j = 0; j < w_; j++) matrix_[i * w_ + j] += add_(i, j);
+        }
+        return *this;
+    }
+
+    Dense<T> Transpose() {
         std::vector<T> trans_;
         trans_.reserve(h_ * w_);
         for (int i = 0; i < w_; i++) {
@@ -51,8 +69,7 @@ public:
                 trans_.push_back(matrix_[j * w_ + i]);
             }
         }
-        std::swap(h_, w_);
-        matrix_ = trans_;
+        return Dense<T>{w_, h_, trans_};
     }
 
     Dense<T> get_column(int j) {
@@ -62,20 +79,29 @@ public:
         return Dense<T>{h_, 1, col_};
     }
 
-    double norm(Dense<T> &vec_) const // only for vectors
+    double norm() const // only for vectors
     {
         T sum = 0;
-        for (int i = 0; i < vec_.size(); i++) sum += vec_(i, 0) * vec_(i, 0);
+        for (int i = 0; i < h_; i++) sum += matrix_[i] * matrix_[i];
         return sqrt(static_cast<double>(sum));
     }
 
-    Dense<T> &eval_norm_vec(int i) {
-        if (this(i, 0) >= 0) {
-            this(i, 0) += this->norm();
-        } else this(i, 0) -= this(i, 0) - this->norm();
-        double cur_norm = this->norm();
-        for (int j = 0; j < h_; j++) this(j, 0) /= cur_norm;
-        return this;
+    T scalar(const Dense<T> &mult_) // only for vectors
+    {
+        T sum = 0;
+        for (int i = 0; i < h_; i++) sum += matrix_[i] * mult_(i, 0);
+        return sum;
+    }
+
+    Dense<T> eval_norm_vec(int i) {
+        Dense<T> res_{h_, 1, matrix_};
+        for (int j = 0; j < i; j++) res_(j, 0) = 0;
+        if (res_(i, 0) >= 0) {
+            res_(i, 0) += res_.norm();
+        } else res_(i, 0) -= res_.norm();
+        double cur_norm = res_.norm();
+        for (int j = i; j < h_; j++) res_(j, 0) /= cur_norm; // здесь скорее всего нужно идти от j = i
+        return res_;
     }
 
     friend std::ostream &operator<<(std::ostream &out, const Dense<T> &output_) {
