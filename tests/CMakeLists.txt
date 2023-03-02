@@ -1,30 +1,14 @@
 cmake_minimum_required(VERSION 3.24)
 project(SLAE)
-# GTest include code would
-# go somewhere in here
-
-add_executable(test_trid tests_tridiagonal.cpp)
-add_executable(test_csr tests_CSR.cpp)
-add_executable(test_dense tests_dense.cpp)
-add_executable(test_householder tests_Householder.cpp)
 
 find_package(GTest REQUIRED)
+file(GLOB files "*.cpp")
 
-target_link_libraries(test_trid
-        PRIVATE
-        GTest::GTest)
+foreach (file ${files})
+    get_filename_component(TName ${file} NAME)
+    add_executable("${TName}" ${file})
+    target_link_libraries(${TName}
+            PRIVATE
+            GTest::GTest)
+endforeach ()
 
-target_link_libraries(test_csr
-        PRIVATE
-        GTest::GTest)
-
-target_link_libraries(test_dense
-        PRIVATE
-        GTest::GTest)
-
-target_link_libraries(test_householder
-        PRIVATE
-        GTest::GTest)
-
-
-#add_test(gtests test_trid test_csr tests_dense.cpp)

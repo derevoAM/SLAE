@@ -30,7 +30,7 @@ public:
         result_.reserve(h_ * mult_.w_);
         for (int i = 0; i < h_; i++) {
             for (int k = 0; k < mult_.w_; k++) {
-                T sum = 0;
+                T sum = static_cast<T>(0);
                 for (int j = 0; j < w_; j++) sum += matrix_[i * w_ + j] * mult_(j, k);
                 result_.push_back(sum);
             }
@@ -72,35 +72,36 @@ public:
         return Dense<T>{w_, h_, trans_};
     }
 
-    Dense<T> get_column(int j) {
+    Dense<T> get_column(int j) const { // getting the j column from matrix
         std::vector<T> col_;
         col_.reserve(h_);
         for (int i = 0; i < h_; i++) col_.push_back(matrix_[i * w_ + j]);
         return Dense<T>{h_, 1, col_};
     }
 
-    double norm() const // only for vectors
+    T norm() const // only for vectors
     {
-        T sum = 0;
+        T sum = static_cast<T>(0);
         for (int i = 0; i < h_; i++) sum += matrix_[i] * matrix_[i];
         return sqrt(static_cast<double>(sum));
     }
 
     T scalar(const Dense<T> &mult_) // only for vectors
     {
-        T sum = 0;
+        T sum = static_cast<T>(0);
         for (int i = 0; i < h_; i++) sum += matrix_[i] * mult_(i, 0);
         return sum;
     }
 
-    Dense<T> eval_norm_vec(int i) {
+    Dense<T> eval_norm_vec(
+            int i) { // evaluation of the normal vector, taking into account that the first i coordinates are equal to 0
         Dense<T> res_{h_, 1, matrix_};
         for (int j = 0; j < i; j++) res_(j, 0) = 0;
         if (res_(i, 0) >= 0) {
             res_(i, 0) += res_.norm();
         } else res_(i, 0) -= res_.norm();
         double cur_norm = res_.norm();
-        for (int j = i; j < h_; j++) res_(j, 0) /= cur_norm; // здесь скорее всего нужно идти от j = i
+        for (int j = i; j < h_; j++) res_(j, 0) /= cur_norm;
         return res_;
     }
 
