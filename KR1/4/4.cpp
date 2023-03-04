@@ -25,5 +25,5 @@ int main()
     std::vector<double> gaus_ = Gaus_Zeidel(A, b, x, t);
     std::vector<double> jacobi_ = Jacobi(A, b, x, t);
     std::vector<double> fpi_ = FPI(A, b, x, t, tau);
-    std::cout << gaus_ << "\n" << jacobi_ << "\n" << fpi_;
+    std::cout << "Minimum of the function = " << scalar(gaus_, A * gaus_) * 0.5 - scalar(b, gaus_); // задание лажа, так как C должен быть скаляром, а в задании это вектор
 }
