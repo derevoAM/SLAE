@@ -10,6 +10,8 @@ add_subdirectory(src/Solvers)
 add_subdirectory(src/Decompositions)
 add_subdirectory(tests)
 add_subdirectory(KR1/4)
+add_subdirectory(KR1/3)
+
 
 
 

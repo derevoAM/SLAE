@@ -17,7 +17,7 @@ std::vector<T> FPI(CSR<T> &A, std::vector<T> &b, std::vector<T> &x0, T tolerance
             for (int j = 0; j < x.size(); j++) sum -= x[j] * A(i, j) * tau;
             x_1[i] = sum;
         }
-        fout << norm(A * x_1 - b) << " " << count << "\n";
+        fout << norm(A * x_1 - b) << " " << count << "\n"; // tsak 4
         count ++;
 
 
