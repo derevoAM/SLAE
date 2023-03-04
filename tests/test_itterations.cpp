@@ -2,6 +2,8 @@
 #include "../src/Matrix/Sparce.h"
 #include "../src/Solvers/Gaus_Zeidel.h"
 #include "../src/Solvers/Jacobi.h"
+#include "../src/Solvers/FPI.h"
+
 
 TEST(ITTERATIONS, GAUS_ZEIDEL) {
 
@@ -16,7 +18,7 @@ TEST(ITTERATIONS, GAUS_ZEIDEL) {
     double t = 1e-7;
     std::vector<double> res_ = Gaus_Zeidel(A, b, x, t);
     std::vector<double> diff_ = A * res_ - b;
-    for(int i = 0; i < 2; i ++) ASSERT_NEAR(diff_[i], 0, 1e-3);
+    for (int i = 0; i < 2; i++) ASSERT_NEAR(diff_[i], 0, 1e-3);
 }
 
 TEST(ITTERATIONS, JACOBI) {
@@ -32,10 +34,25 @@ TEST(ITTERATIONS, JACOBI) {
     double t = 1e-7;
     std::vector<double> res_ = Jacobi(A, b, x, t);
     std::vector<double> diff_ = A * res_ - b;
-    for(int i = 0; i < 2; i ++) ASSERT_NEAR(diff_[i], 0, 1e-3);
+    for (int i = 0; i < 2; i++) ASSERT_NEAR(diff_[i], 0, 1e-3);
 }
 
+TEST(ITTERATIONS, FPI) {
 
+    std::vector<DOK<double>> dok_;
+    dok_.push_back({0, 0, 10});
+    dok_.push_back({0, 1, -0.5});
+    dok_.push_back({1, 0, -0.5});
+    dok_.push_back({1, 1, 10});
+    std::vector<double> b{1, 3};
+    std::vector<double> x{1, 1};
+    CSR<double> A(dok_, 2, 2);
+    double t = 1e-7;
+    double tau = 1e-2;
+    std::vector<double> res_ = FPI(A, b, x, t, tau);
+    std::vector<double> diff_ = A * res_ - b;
+    for (int i = 0; i < 2; i++) ASSERT_NEAR(diff_[i], 0, 1e-3);
+}
 
 
 int main(int argc, char **argv) {

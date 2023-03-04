@@ -15,7 +15,7 @@ std::vector<T> Jacobi(CSR<T> &A, std::vector<T> &b, std::vector<T> &x, T toleran
         }
 
     }
-    return x;
+    return x_1;
 }
 
 #endif //SLAE_JACOBI_H
