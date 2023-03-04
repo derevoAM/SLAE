@@ -15,6 +15,14 @@ std::vector<T> operator+(const std::vector<T> &vec_1_, const std::vector<T> &vec
 }
 
 template<typename T>
+std::vector<T> operator*(const std::vector<T> &vec_1_, T mult_) {
+    std::vector<T> res_;
+    res_.reserve(vec_1_.size());
+    for (int i = 0; i < vec_1_.size(); i++) res_.push_back(vec_1_[i] * mult_);
+    return res_;
+}
+
+template<typename T>
 std::vector<T> operator-(const std::vector<T> &vec_1_, const std::vector<T> &vec_2_) {
     std::vector<T> res_;
     res_.reserve(vec_1_.size());

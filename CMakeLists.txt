@@ -9,6 +9,7 @@ add_subdirectory(src/Matrix)
 add_subdirectory(src/Solvers)
 add_subdirectory(src/Decompositions)
 add_subdirectory(tests)
+add_subdirectory(KR1/4)
 
 
 

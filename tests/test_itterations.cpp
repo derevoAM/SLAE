@@ -1,5 +1,4 @@
 #include "gtest/gtest.h"
-#include "../src/Matrix/Sparce.h"
 #include "../src/Solvers/Gaus_Zeidel.h"
 #include "../src/Solvers/Jacobi.h"
 #include "../src/Solvers/FPI.h"

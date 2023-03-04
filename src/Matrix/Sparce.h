@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <fstream>
 #include "Vector.h"
 
 template<typename T>
@@ -74,6 +75,20 @@ public:
         }
         return result_;
     }
+
+    CSR<T> operator+(const std::vector<T> &add_) {
+        std::vector<DOK<T>> elem_;
+        elem_.reserve(h_ * w_);
+        for (int i = 0; i < h_; i++) {
+            for(int j = 0; j < w_; j ++)
+            {
+                if((*this)(i, j) + add_(i, j) != 0) elem_.push_back({i, j, (*this)(i, j) + add_(i, j)});
+            }
+        }
+        return CSR<T>{elem_, h_, w_};
+    }
+
+
 
     T get_value(int i) const {
         return value_[i];
