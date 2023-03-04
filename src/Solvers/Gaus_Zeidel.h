@@ -2,13 +2,6 @@
 #define SLAE_GAUS_ZEIDEL_H
 
 #include "../Matrix/Sparce.h"
-#include "../Matrix/Vector.h"
-
-template<typename T>
-bool stop_check(CSR<T> &A, std::vector<T> &x, std::vector<T> &b, T tolerance) {
-    std::vector<T> res_ = A * x - b;
-    return norm(A * x - b) < tolerance;
-}
 
 template<typename T>
 std::vector<T> Gaus_Zeidel(CSR<T> &A, std::vector<T> &b, std::vector<T> &x, T tolerance) {

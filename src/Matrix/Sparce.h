@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include "Vector.h"
 
 template<typename T>
 struct DOK {
@@ -94,5 +95,11 @@ public:
         return out;
     }
 };
+
+template<typename T>
+bool stop_check(CSR<T> &A, std::vector<T> &x, std::vector<T> &b, T tolerance) {
+    std::vector<T> res_ = A * x - b;
+    return norm(A * x - b) < tolerance;
+}
 
 #endif //SLAE_SPARCE_H
