@@ -65,7 +65,8 @@ public:
         return 0;
     }
 
-    std::vector<T> operator*(const std::vector<T> &mult_) {
+
+    std::vector<T> operator*(const std::vector<T> &mult_) const {
         std::vector<T> result_;
         result_.reserve(h_);
         for (int i = 0; i < h_; i++) {
@@ -75,8 +76,21 @@ public:
         }
         return result_;
     }
+    CSR<T> operator*(const CSR<T> &mult_) // TODO: modify
+    {
+        std::vector<DOK<T>> elem_;
+        elem_.reserve(h_ * mult_.w_);
+        for (int i = 0; i < h_; i++) {
+            for (int k = 0; k < mult_.w_; k++) {
+                T sum = static_cast<T>(0);
+                for (int j = 0; j < w_; j++) sum += (*this)(i, j) * mult_(j, k);
+                if(sum != 0) elem_.push_back({i, k, sum});
+            }
+        }
+        return CSR<T>{elem_, h_, mult_.w_};
+    }
 
-    CSR<T> operator+(const std::vector<T> &add_) {
+    CSR<T> operator+(const CSR<T> &add_) {
         std::vector<DOK<T>> elem_;
         elem_.reserve(h_ * w_);
         for (int i = 0; i < h_; i++) {
@@ -86,6 +100,35 @@ public:
             }
         }
         return CSR<T>{elem_, h_, w_};
+    }
+
+    CSR<T> operator-(const CSR<T> &add_) {
+        std::vector<DOK<T>> elem_;
+        elem_.reserve(h_ * w_);
+        for (int i = 0; i < h_; i++) {
+            for(int j = 0; j < w_; j ++)
+            {
+                if((*this)(i, j) - add_(i, j) != 0) elem_.push_back({i, j, (*this)(i, j) - add_(i, j)});
+            }
+        }
+        return CSR<T>{elem_, h_, w_};
+    }
+
+    CSR<T> transpose() // TODO: modify
+    {
+        std::vector<DOK<T>> elem_;
+        elem_.reserve(value_.size());
+        for(int i = 0; i < h_; i ++)
+        {
+            for(int j = 0; j < w_; j ++)
+            {
+                if((*this)(i, j) != 0)
+                {
+                    elem_.push_back({j, i, (*this)(i, j)});
+                }
+            }
+        }
+        return CSR<T>{elem_, w_, h_};
     }
 
 
@@ -102,6 +145,18 @@ public:
         return row_[i];
     }
 
+    T max_eigenvalue_pow() // t - tolerance
+    {
+        std::vector<T> r(h_, static_cast<T>(1));
+        T lambda;
+        for(int i = 0; i < 100; i ++)
+        {
+            //lambda = scalar(r, (*this) * r) / scalar(r, r);
+            //std::cout << lambda << "\n";
+            r = (*this) * r * (static_cast<T>(1) / norm((*this) * r));
+        }
+    }
+
     friend std::ostream &operator<<(std::ostream &out, const CSR<T> &matrix) {
         for (int i = 0; i < matrix.h_; i++) {
             for (int j = 0; j < matrix.w_; j++) out << matrix(i, j) << " ";
@@ -112,7 +167,7 @@ public:
 };
 
 template<typename T>
-bool stop_check(CSR<T> &A, std::vector<T> &x, std::vector<T> &b, T tolerance) {
+bool stop_check(const CSR<T> &A, const std::vector<T> &x, const std::vector<T> &b, T tolerance) {
     std::vector<T> res_ = A * x - b;
     return norm(A * x - b) < tolerance;
 }

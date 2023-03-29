@@ -96,6 +96,59 @@ TEST(SRC, MULTIPLICATION) {
 
 }
 
+TEST(SRC, MAX_EIGENVALUE) {
+    std::vector<DOK<double>> dok_;
+    dok_.push_back({2, 2, 2.45});
+    dok_.push_back({2, 1, 6.6});
+    dok_.push_back({0, 1, 2.1});
+    dok_.push_back({1, 1, -1.2});
+    dok_.push_back({1, 2, 4});
+    dok_.push_back({0, 0, -13.2});
+    dok_.push_back({2, 3, -12});
+    dok_.push_back({3, 3, 0.3});
+    dok_.push_back({0, 3, 1.1});
+
+    CSR<double> matrix_(dok_, 4, 4);
+    matrix_ = matrix_ * matrix_.transpose();
+    double lambda = matrix_.max_eigenvalue_pow(1e-5);
+
+}
+
+TEST(SRC, MAX_EIGENVALUE_SOR) {
+    std::vector<DOK<double>> dok_;
+
+    dok_.push_back({0, 0, 2.45});
+    dok_.push_back({1, 0, -2});
+    dok_.push_back({2, 0, 3.2});
+    dok_.push_back({3, 0, 6.7});
+    dok_.push_back({1, 1, 3.4});
+    dok_.push_back({1, 2, -1.23});
+    dok_.push_back({1, 3, 2.45});
+    dok_.push_back({2, 2, 0.5});
+    dok_.push_back({2, 3, 1.45});
+    dok_.push_back({3, 3, 8});
+    CSR<double> matrix_(dok_, 4, 4);
+    matrix_ = matrix_ * matrix_.transpose();
+
+
+    std::vector<DOK<double>> diag;
+    diag.push_back({0, 0, 400.0/2401});
+    diag.push_back({1, 1, 25.0/389});
+    diag.push_back({2, 2, 10000.0/120029});
+    diag.push_back({3, 3, 200.0/23399});
+    CSR<double> diag_(diag, 4, 4);
+
+    std::vector<DOK<double>> unit;
+    unit.push_back({0, 0, 1});
+    unit.push_back({1, 1, 1});
+    unit.push_back({2, 2, 1});
+    unit.push_back({3, 3, 1});
+    CSR<double> unit_(unit, 4, 4);
+
+    matrix_ = unit_ - (diag_ * matrix_);
+    double lambda = matrix_.max_eigenvalue_pow(1e-5);
+
+}
 
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);

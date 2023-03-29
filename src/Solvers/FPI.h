@@ -2,27 +2,20 @@
 #define SLAE_FPI_H
 
 #include "../Matrix/Sparce.h"
+#include <chrono>
 
 template<typename T>
-std::vector<T> FPI(CSR<T> &A, std::vector<T> &b, std::vector<T> &x0, T tolerance, T tau) {
+std::vector<T> FPI(const CSR<T> &A, const std::vector<T> &b, const std::vector<T> &x0, T tolerance, T tau) {
     std::vector<T> x = x0;
     std::vector x_1 = x;
-    std::ofstream fout;
-    fout.open("fpi.txt");
-    int count = 1;
     while (!stop_check(A, x_1, b, tolerance)) {
         x = x_1;
-        for (int i = 0; i < x.size(); i++) {
-            T sum = b[i] * tau + x[i];
-            for (int j = 0; j < x.size(); j++) sum -= x[j] * A(i, j) * tau;
-            x_1[i] = sum;
-        }
-        fout << norm(A * x_1 - b) << " " << count << "\n"; // tsak 4
-        count ++;
-
+        //std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+        x_1 = x - (A * x - b) * tau;
+        //std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        //std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
 
     }
-    fout.close();
     return x_1;
 }
 
