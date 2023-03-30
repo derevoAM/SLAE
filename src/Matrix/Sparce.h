@@ -168,8 +168,15 @@ public:
 
 template<typename T>
 bool stop_check(const CSR<T> &A, const std::vector<T> &x, const std::vector<T> &b, T tolerance) {
-    std::vector<T> res_ = A * x - b;
-    return norm(A * x - b) < tolerance;
+    std::vector<T> result_;
+    result_.reserve(x.size());
+    for (int i = 0; i < x.size(); i++) {
+        T sum = 0;
+        for (int j = 0; j < A.get_row(i + 1) - A.get_row(i); j++) sum += A.get_value(A.get_row(i) + j) * x[A.get_col(A.get_row(i) + j)];
+        result_.push_back(sum);
+    }
+    //std::cout << result_ << "\n \n \n \n \n \n \n \n \n \n \n \n \n \n ";
+    return norm(result_ - b) < tolerance;
 }
 
 #endif //SLAE_SPARCE_H

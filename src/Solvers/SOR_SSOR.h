@@ -9,7 +9,9 @@ std::vector<T> SOR(const CSR<T> &A, const std::vector<T> &b, const std::vector<T
     while (!stop_check(A, x, b, tolerance)) {
         for (int i = 0; i < x.size(); i++) {
             T sum = b[i];
-            for (int j = 0; j < x.size(); j++) if (j != i) sum -= x[j] * A(i, j);
+            for (int j = 0; j < A.get_row(i + 1) - A.get_row(i); j++)
+                if (i != j)
+                    sum -= A.get_value(A.get_row(i) + j) * x[A.get_col(A.get_row(i) + j)];
             x[i] = (1 - w) * x[i] + w * sum / A(i, i);
         }
     }
@@ -22,13 +24,17 @@ std::vector<T> SSOR(const CSR<T> &A, const std::vector<T> &b, const std::vector<
     while (!stop_check(A, x, b, tolerance)) {
         for (int i = 0; i < x.size(); i++) {
             T sum = b[i];
-            for (int j = 0; j < x.size(); j++) if (j != i) sum -= x[j] * A(i, j);
+            for (int j = 0; j < A.get_row(i + 1) - A.get_row(i); j++)
+                if (i != j)
+                    sum -= A.get_value(A.get_row(i) + j) * x[A.get_col(A.get_row(i) + j)];
             x[i] = (1 - w) * x[i] + w * sum / A(i, i);
         }
 
         for (int i = x.size() - 1; i > 0; i--) {
             T sum = b[i];
-            for (int j = 0; j < x.size(); j++) if (j != i) sum -= x[j] * A(i, j);
+            for (int j = 0; j < A.get_row(i + 1) - A.get_row(i); j++)
+                if (i != j)
+                    sum -= A.get_value(A.get_row(i) + j) * x[A.get_col(A.get_row(i) + j)];
             x[i] = (1 - w) * x[i] + w * sum / A(i, i);
         }
 
