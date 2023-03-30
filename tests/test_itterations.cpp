@@ -4,7 +4,7 @@
 #include "../src/Solvers/Gaus_Zeidel.h"
 #include "../src/Solvers/Jacobi.h"
 #include "../src/Solvers/FPI.h"
-#include "../src/Solvers/SOR.h"
+#include "../src/Solvers/SOR_SSOR.h"
 
 
 TEST(ITTERATIONS, GAUS_ZEIDEL) {
@@ -56,7 +56,7 @@ TEST(ITTERATIONS, FPI) {
     for (int i = 0; i < 2; i++) ASSERT_NEAR(diff_[i], 0, 1e-3);
 }
 
-TEST(ITTERATIONS, SOR) {
+TEST(ITTERATIONS, SOR_SSOR) {
     std::vector<DOK<double>> dok_;
 
     std::string line;
@@ -64,7 +64,7 @@ TEST(ITTERATIONS, SOR) {
     std::string j_;
     std::string value_;
 
-    std::ifstream file("/home/derevo/Projects/SLAE/tests/txt_files/mat_diag_pos_20.txt");
+    std::ifstream file("/home/derevo/Projects/SLAE/tests/txt_files/mat_diag_pos_100.txt");
     if (file.is_open()) {
         while (getline(file, line)) {
             if (line[1] == ' ') {
@@ -90,30 +90,29 @@ TEST(ITTERATIONS, SOR) {
     file.close();
 
     std::vector<double> b;
-    b.reserve(20);
+    b.reserve(100);
 
-    std::ifstream file_b("/home/derevo/Projects/SLAE/tests/txt_files/b_20.txt");
+    std::ifstream file_b("/home/derevo/Projects/SLAE/tests/txt_files/b_100.txt");
     if (file_b.is_open()) {
         while (getline(file_b, line)) {
             b.push_back(std::stod(line));
         }
     }
     file_b.close();
-    std::vector<double> x(20, 1);
-    CSR<double> A(dok_, 20, 20);
+    std::vector<double> x(100, 1);
+    CSR<double> A(dok_, 100, 100);
 
     std::vector<DOK<double>> dok_diag;
     std::vector<DOK<double>> dok_unit;
 
 
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 100; i++) {
         dok_diag.push_back({i, i, 1 / A(i, i)});
         dok_unit.push_back({i, i, 1});
-        //A(i, i) = A(i, i) * 300;
     }
 
-    CSR<double> D(dok_diag, 20, 20);
-    CSR<double> E(dok_unit, 20, 20);
+    CSR<double> D(dok_diag, 100, 100);
+    CSR<double> E(dok_unit, 100, 100);
 
     E = E - D * A;
     double w = abs(E.max_eigenvalue_pow());
@@ -122,9 +121,14 @@ TEST(ITTERATIONS, SOR) {
 
 
     std::vector<double> res_ = SOR(A, b, x, t, w);
+    std::vector<double> res_s = SSOR(A, b, x, t, w);
+
     std::vector<double> diff_ = A * res_ - b;
-    for (int i = 0; i < 20; i++) ASSERT_NEAR(diff_[i], 0, 1e-3);
+    std::vector<double> diff_s = A * res_s - b;
+    for (int i = 0; i < 100; i++) ASSERT_NEAR(diff_[i], 0, 1e-3);
+    for (int i = 0; i < 100; i++) ASSERT_NEAR(diff_s[i], 0, 1e-3);
 }
+
 
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);

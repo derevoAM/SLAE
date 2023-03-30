@@ -9,10 +9,10 @@ std::vector<T> Jacobi(const CSR<T> &A, const std::vector<T> &b, const std::vecto
     std::vector x_1 = x;
     while (!stop_check(A, x_1, b, tolerance)) {
         x = x_1;
+
+        x_1 = b - A * x;
         for (int i = 0; i < x.size(); i++) {
-            T sum = b[i];
-            for (int j = 0; j < x.size(); j++) if (j != i) sum -= x[j] * A(i, j);
-            x_1[i] = sum / A(i, i);
+            x_1[i] = (x_1[i] + A(i, i) * x[i]) / A(i, i);
         }
 
     }
