@@ -96,6 +96,62 @@ TEST(SRC, MULTIPLICATION) {
 
 }
 
+TEST(SRC, MULTIPLICATION_BIG) {
+    std::vector<DOK<double>> dok_;
+
+    std::string line;
+    std::string i_;
+    std::string j_;
+    std::string value_;
+
+    std::ifstream file("/home/derevo/Projects/SLAE/tests/txt_files/mat_diag_pos_1000.txt");
+    if (file.is_open()) {
+        while (getline(file, line)) {
+            if (line[1] == ' ') {
+                i_.assign(line, 0, 1);
+                line.erase(0, 2);
+            } else if(line[2] == ' '){
+                i_.assign(line, 0, 2);
+                line.erase(0, 3);
+            } else if(line[3] == ' '){
+                i_.assign(line, 0, 3);
+                line.erase(0, 4);
+            }
+
+
+            if (line[1] == ' ') {
+                j_.assign(line, 0, 1);
+                line.erase(0, 2);
+            } else if(line[2] == ' '){
+                j_.assign(line, 0, 2);
+                line.erase(0, 3);
+            } else if(line[3] == ' '){
+                j_.assign(line, 0, 3);
+                line.erase(0, 4);
+            }
+
+            value_ = line;
+            dok_.push_back({std::stoi(i_), std::stoi(j_), std::stod(value_)});
+        }
+    }
+    file.close();
+
+    std::vector<double> b;
+    b.reserve(1000);
+
+    std::ifstream file_b("/home/derevo/Projects/SLAE/tests/txt_files/b_1000.txt");
+    if (file_b.is_open()) {
+        while (getline(file_b, line)) {
+            b.push_back(std::stod(line));
+        }
+    }
+    file_b.close();
+    std::vector<double> x(1000, 1);
+    CSR<double> A(dok_, 1000, 1000);
+    std::vector<double> res_ = A * x;
+
+}
+
 TEST(SRC, MAX_EIGENVALUE) {
     std::vector<DOK<double>> dok_;
     dok_.push_back({2, 2, 2.45});
@@ -110,7 +166,7 @@ TEST(SRC, MAX_EIGENVALUE) {
 
     CSR<double> matrix_(dok_, 4, 4);
     matrix_ = matrix_ * matrix_.transpose();
-    double lambda = matrix_.max_eigenvalue_pow(1e-5);
+    double lambda = matrix_.max_eigenvalue_pow();
 
 }
 
@@ -146,7 +202,7 @@ TEST(SRC, MAX_EIGENVALUE_SOR) {
     CSR<double> unit_(unit, 4, 4);
 
     matrix_ = unit_ - (diag_ * matrix_);
-    double lambda = matrix_.max_eigenvalue_pow(1e-5);
+    double lambda = matrix_.max_eigenvalue_pow();
 
 }
 

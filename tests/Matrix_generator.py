@@ -123,3 +123,39 @@ b_1000 = np.random.random(1000)
 with open('txt_files/b_1000.txt', 'w') as file:
     for i in range(1000):
         file.write('{:.2f}\n'.format(b_1000[i] * 10))
+
+
+
+
+
+mat_diag_pos_5 = np.random.random((5, 5))
+
+with open('txt_files/mat_diag_pos_5.txt', 'w') as file:
+    for i in range(5):
+        sum = 0
+        # for j in range(i + 1):
+        #     sum += mat_diag_pos_20[i, j]
+
+
+        for j in range(i + 1, 5):
+            mat_diag_pos_5[i, j] = 0
+
+    mat_diag_pos_5 = np.matmul(mat_diag_pos_5, np.transpose(mat_diag_pos_5))
+
+
+    for i in range(5):
+        sum = 0
+
+        for j in range(5):
+            sum += mat_diag_pos_5[i, j]
+
+        mat_diag_pos_5[i, i] = sum
+        for j in range(5):
+            file.write('{} {} {:.3f} \n'.format(i, j, mat_diag_pos_5[i, j] * 10))
+
+
+b_5 = np.random.random(5)
+
+with open('txt_files/b_5.txt', 'w') as file:
+    for i in range(5):
+        file.write('{:.2f}\n'.format(b_5[i] * 10))

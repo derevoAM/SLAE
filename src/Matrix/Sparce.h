@@ -67,12 +67,13 @@ public:
 
 
     std::vector<T> operator*(const std::vector<T> &mult_) const {
-        std::vector<T> result_;
+        std::vector<T> result_(h_);
         result_.reserve(h_);
         for (int i = 0; i < h_; i++) {
             T sum = 0;
-            for (int j = 0; j < row_[i + 1] - row_[i]; j++) sum += value_[row_[i] + j] * mult_[col_[row_[i] + j]];
-            result_.push_back(sum);
+            for (int j = row_[i]; j < row_[i + 1]; j++) sum += value_[j] * mult_[col_[j]];
+            result_[i] = sum;
+
         }
         return result_;
     }
@@ -168,15 +169,9 @@ public:
 
 template<typename T>
 bool stop_check(const CSR<T> &A, const std::vector<T> &x, const std::vector<T> &b, T tolerance) {
-    std::vector<T> result_;
-    result_.reserve(x.size());
-    for (int i = 0; i < x.size(); i++) {
-        T sum = 0;
-        for (int j = 0; j < A.get_row(i + 1) - A.get_row(i); j++) sum += A.get_value(A.get_row(i) + j) * x[A.get_col(A.get_row(i) + j)];
-        result_.push_back(sum);
-    }
-    //std::cout << result_ << "\n \n \n \n \n \n \n \n \n \n \n \n \n \n ";
-    return norm(result_ - b) < tolerance;
+    std::vector<T> result_ = A * x - b;
+    //std::cout << norm(result_) << "\n";
+    return norm(result_) < tolerance;
 }
 
 #endif //SLAE_SPARCE_H

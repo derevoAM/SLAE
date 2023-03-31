@@ -16,8 +16,6 @@ std::vector<T> Gaus_Zeidel(const CSR<T> &A, const std::vector<T> &b, const std::
                     sum -= A.get_value(A.get_row(i) + j) * x[A.get_col(A.get_row(i) + j)];
             x[i] = sum / A(i, i);
         }
-        //std::cout << x << "\n";
-
     }
     return x;
 }
@@ -59,7 +57,7 @@ std::vector<T> Gaus_Zeidel_Sym_it(const CSR<T> &A, const std::vector<T> &b, cons
         x[i] = sum / A(i, i);
     }
 
-    for (int i = x.size() - 1; i > 0; i--) {
+    for (int i = x.size() - 1; i >= 0; i--) {
         T sum = b[i];
         for (int j = 0; j < A.get_row(i + 1) - A.get_row(i); j++)
             if (i != j)
@@ -74,22 +72,20 @@ std::vector<T>
 Gaus_Zeidel_accelerated(const CSR<T> &A, const std::vector<T> &b, const std::vector<T> &x, T rho, T tolerance) {
     std::vector<T> x0 = x;
     std::vector<T> x1 = Gaus_Zeidel_Sym_it(A, b, x0);
-    std::vector<T> x2 = x1;
+    std::vector<T> x2 = Gaus_Zeidel_Sym_it(A, b, x1);
+    x1 = x2;
 
-    std::cout << x1;
     T mu0 = 1;
     T mu1 = 1 / rho;
     T mu2 = 2 * mu1 / rho - mu0;
-    int i = 0;
-    while (!stop_check(A, x2, b, tolerance) && i <= 10 ) {
-        x2 = x1 * (2 * mu1 / (rho * mu2)) - x0 * (mu0 / mu2) + b * (2 * mu1 / (rho * mu2));
+
+    while (!stop_check(A, x2, b, tolerance)) {
+        x2 = x1 * (2 * mu1 / (rho * mu2)) - x0 * (mu0 / mu2);
         x0 = x1;
-        x1 = x2;
+        x1 = Gaus_Zeidel_Sym_it(A, b, x2);
         mu0 = mu1;
         mu1 = mu2;
         mu2 = 2 * mu1 / rho - mu0;
-        std::cout << x2 << "\n \n";
-        i ++;
     }
 
     return x2;

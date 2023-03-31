@@ -1,4 +1,5 @@
 #include <fstream>
+#include <chrono>
 
 #include "gtest/gtest.h"
 #include "../src/Solvers/Gaus_Zeidel.h"
@@ -16,23 +17,30 @@ TEST(ITTERATIONS, GAUS_ZEIDEL) {
     std::string j_;
     std::string value_;
 
-    std::ifstream file("/home/derevo/Projects/SLAE/tests/txt_files/mat_diag_pos_20.txt");
+    std::ifstream file("/home/derevo/Projects/SLAE/tests/txt_files/mat_diag_pos_1000.txt");
     if (file.is_open()) {
         while (getline(file, line)) {
             if (line[1] == ' ') {
                 i_.assign(line, 0, 1);
                 line.erase(0, 2);
-            } else {
+            } else if(line[2] == ' '){
                 i_.assign(line, 0, 2);
                 line.erase(0, 3);
+            } else if(line[3] == ' '){
+                i_.assign(line, 0, 3);
+                line.erase(0, 4);
             }
+
 
             if (line[1] == ' ') {
                 j_.assign(line, 0, 1);
                 line.erase(0, 2);
-            } else {
+            } else if(line[2] == ' '){
                 j_.assign(line, 0, 2);
                 line.erase(0, 3);
+            } else if(line[3] == ' '){
+                j_.assign(line, 0, 3);
+                line.erase(0, 4);
             }
 
             value_ = line;
@@ -42,25 +50,33 @@ TEST(ITTERATIONS, GAUS_ZEIDEL) {
     file.close();
 
     std::vector<double> b;
-    b.reserve(20);
+    b.reserve(1000);
 
-    std::ifstream file_b("/home/derevo/Projects/SLAE/tests/txt_files/b_20.txt");
+    std::ifstream file_b("/home/derevo/Projects/SLAE/tests/txt_files/b_1000.txt");
     if (file_b.is_open()) {
         while (getline(file_b, line)) {
             b.push_back(std::stod(line));
         }
     }
     file_b.close();
-    std::vector<double> x(20, 1);
-    CSR<double> A(dok_, 20, 20);
+    std::vector<double> x(1000, 1);
+    CSR<double> A(dok_, 1000, 1000);
 
 
 
-    double t = 1e-7;
-    double rho = 0.9;
+    double t = 1e-20;
+    double rho = 0.428;
+
+    auto start = std::chrono::high_resolution_clock::now();
+
     std::vector<double> res_ = Gaus_Zeidel_accelerated(A, b, x, rho, t);
-//    std::vector<double> diff_ = A * res_ - b;
-//    for (int i = 0; i < 20; i++) ASSERT_NEAR(diff_[i], 0, 1e-3);
+
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = duration_cast<std::chrono::microseconds>(stop - start);
+    std::cout << duration.count();
+
+    std::vector<double> diff_ = A * res_ - b;
+    for (int i = 0; i < 1000; i++) ASSERT_NEAR(diff_[i], 0, 1e-3);
 }
 
 TEST(ITTERATIONS, JACOBI) {
