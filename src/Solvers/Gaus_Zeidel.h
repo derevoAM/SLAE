@@ -7,7 +7,9 @@
 template<typename T>
 std::vector<T> Gaus_Zeidel(const CSR<T> &A, const std::vector<T> &b, const std::vector<T> &x0, T tolerance) {
     std::vector<T> x = x0;
+    int count = 0;
     while (!stop_check(A, x, b, tolerance)) {
+
         for (int i = 0; i < x.size(); i++) {
             T sum = b[i];
 
@@ -16,7 +18,9 @@ std::vector<T> Gaus_Zeidel(const CSR<T> &A, const std::vector<T> &b, const std::
                     sum -= A.get_value(A.get_row(i) + j) * x[A.get_col(A.get_row(i) + j)];
             x[i] = sum / A(i, i);
         }
+        count++;
     }
+    std::cout << count << "\n";
     return x;
 }
 
@@ -78,6 +82,7 @@ Gaus_Zeidel_accelerated(const CSR<T> &A, const std::vector<T> &b, const std::vec
     T mu0 = 1;
     T mu1 = 1 / rho;
     T mu2 = 2 * mu1 / rho - mu0;
+    int count = 0;
 
     while (!stop_check(A, x2, b, tolerance)) {
         x2 = x1 * (2 * mu1 / (rho * mu2)) - x0 * (mu0 / mu2);
@@ -86,6 +91,7 @@ Gaus_Zeidel_accelerated(const CSR<T> &A, const std::vector<T> &b, const std::vec
         mu0 = mu1;
         mu1 = mu2;
         mu2 = 2 * mu1 / rho - mu0;
+        count++;
     }
 
     return x2;
