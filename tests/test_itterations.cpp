@@ -7,6 +7,7 @@
 #include "../src/Solvers/FPI.h"
 #include "../src/Solvers/SOR_SSOR.h"
 #include "../src/Solvers/Chebyshev.h"
+#include "../src/Utility/Gradient_Descent.h"
 
 
 TEST(ITTERATIONS, GAUS_ZEIDEL) {
@@ -243,6 +244,64 @@ TEST(ITTERATIONS, MPI_CHEBYSHEV) {
     double lam_max = 768.68;
 
     std::vector<double> res_ = FPI_Chebyshev_accelerated(A, b, x, t, lam_max, lam_min, 64);
+}
+
+
+TEST(ITTERATIONS, GRADIENT_DESCENT) {
+    std::vector<DOK<double>> dok_;
+
+    std::string line;
+    std::string i_;
+    std::string j_;
+    std::string value_;
+
+    std::ifstream file("/home/derevo/Projects/SLAE/tests/txt_files/mat_diag_pos_100.txt");
+    if (file.is_open()) {
+        while (getline(file, line)) {
+            if (line[1] == ' ') {
+                i_.assign(line, 0, 1);
+                line.erase(0, 2);
+            } else if(line[2] == ' '){
+                i_.assign(line, 0, 2);
+                line.erase(0, 3);
+            } else if(line[3] == ' '){
+                i_.assign(line, 0, 3);
+                line.erase(0, 4);
+            }
+
+
+            if (line[1] == ' ') {
+                j_.assign(line, 0, 1);
+                line.erase(0, 2);
+            } else if(line[2] == ' '){
+                j_.assign(line, 0, 2);
+                line.erase(0, 3);
+            } else if(line[3] == ' '){
+                j_.assign(line, 0, 3);
+                line.erase(0, 4);
+            }
+
+            value_ = line;
+            dok_.push_back({std::stoi(i_), std::stoi(j_), std::stod(value_)});
+        }
+    }
+    file.close();
+
+    std::vector<double> b;
+    b.reserve(100);
+
+    std::ifstream file_b("/home/derevo/Projects/SLAE/tests/txt_files/b_100.txt");
+    if (file_b.is_open()) {
+        while (getline(file_b, line)) {
+            b.push_back(std::stod(line));
+        }
+    }
+    file_b.close();
+    std::vector<double> x(100, 1);
+    CSR<double> A(dok_, 100, 100);
+    double t = 1e-10;
+
+    std::vector<double> res_ = Gradient_descent_fast(A, b, x, t);
 }
 
 
