@@ -93,6 +93,7 @@ Gaus_Zeidel_accelerated(const CSR<T> &A, const std::vector<T> &b, const std::vec
         mu2 = 2 * mu1 / rho - mu0;
         count++;
     }
+    std::cout << count << "\n";
 
     return x2;
 
