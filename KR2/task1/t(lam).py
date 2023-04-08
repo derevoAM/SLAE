@@ -10,7 +10,7 @@ with open('speed') as f1:
 lam = np.arange(-10, 800, 0.5)
 
 
-fig, ax = plt.subplots(figsize=(16, 10), dpi=50)
+fig, ax = plt.subplots(figsize=(8, 5), dpi=50)
 
 fig.suptitle("Time from Lmax-Lmin",
              fontsize='xx-large')
