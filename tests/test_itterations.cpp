@@ -6,7 +6,7 @@
 #include "../src/Solvers/Jacobi.h"
 #include "../src/Solvers/FPI.h"
 #include "../src/Solvers/SOR_SSOR.h"
-#include "../src/Utility/Gradient_Descent.h"
+#include "../src/Solvers/Gradient_Descent.h"
 #include "../src/Solvers/Conjugate_Gradient.h"
 #include "txt_files/Matrix_gen.h"
 

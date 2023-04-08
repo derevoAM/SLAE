@@ -13,13 +13,16 @@ std::vector<T> FPI(const CSR<T> &A, const std::vector<T> &b, const std::vector<T
     std::vector<T> r = A * x - b;
     int count = 1;
     std::ofstream out;
-    out.open("Residual(iterations number)");
+    out.open("descent");
+
     while (!stop_check(A, x_1, b, tolerance)) {
-        out << count << " " << norm(r) << "\n";
+        out << x_1[0] << " " << x_1[3] << "\n";
+
         x = x_1;
         x_1 = x - (A * x - b) * tau;
         r = A * x - b;
         count ++;
+
 
     }
     out.close();
@@ -38,20 +41,22 @@ FPI_Chebyshev_accelerated(const CSR<T> &A, const std::vector<T> &b, const std::v
     std::vector<T> roots_ = MPI_Cheb_solutions(sol_, tau_dist, lam_max, lam_min);
 
     int count = 0;
-    std::ofstream out;
-    out.open("Residual(iterations number)");
+
     int i = 1;
     std::vector<double> r;
+//    std::ofstream out;
+//    out.open("descent");
+//    out << 0 << " " << 0 << "\n";
     while (!stop_check(A, x_1, b, tolerance)) {
         x = x_1;
         x_1 = x - (A * x - b) * roots_[count];
         count ++;
         if(count == it) count = 0;
         r = A * x - b;
-        out << i << " " << norm(r) << "\n";
+//        out << x_1[0] << " " << x_1[3] << "\n";
         i ++;
     }
-    out.close();
+//    out.close();
     return x_1;
 }
 
