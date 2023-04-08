@@ -42,7 +42,7 @@ with open('points_5') as f5:
         it5 = np.append(it5, float(a))
         res5 = np.append(res5, float(b))
 
-fig, ax = plt.subplots(figsize=(16, 10), dpi=150)
+fig, ax = plt.subplots(figsize=(16, 10), dpi=50)
 
 fig.suptitle("Convergence",
              fontsize='xx-large')
