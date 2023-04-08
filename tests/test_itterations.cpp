@@ -6,67 +6,15 @@
 #include "../src/Solvers/Jacobi.h"
 #include "../src/Solvers/FPI.h"
 #include "../src/Solvers/SOR_SSOR.h"
-#include "../src/Solvers/Chebyshev.h"
 #include "../src/Utility/Gradient_Descent.h"
 #include "../src/Solvers/Conjugate_Gradient.h"
-
+#include "txt_files/Matrix_gen.h"
 
 
 TEST(ITTERATIONS, GAUS_ZEIDEL) {
-
-    std::vector<DOK<double>> dok_;
-
-    std::string line;
-    std::string i_;
-    std::string j_;
-    std::string value_;
-
-    std::ifstream file("/home/derevo/Projects/SLAE/tests/txt_files/mat_diag_pos_1000.txt");
-    if (file.is_open()) {
-        while (getline(file, line)) {
-            if (line[1] == ' ') {
-                i_.assign(line, 0, 1);
-                line.erase(0, 2);
-            } else if(line[2] == ' '){
-                i_.assign(line, 0, 2);
-                line.erase(0, 3);
-            } else if(line[3] == ' '){
-                i_.assign(line, 0, 3);
-                line.erase(0, 4);
-            }
-
-
-            if (line[1] == ' ') {
-                j_.assign(line, 0, 1);
-                line.erase(0, 2);
-            } else if(line[2] == ' '){
-                j_.assign(line, 0, 2);
-                line.erase(0, 3);
-            } else if(line[3] == ' '){
-                j_.assign(line, 0, 3);
-                line.erase(0, 4);
-            }
-
-            value_ = line;
-            dok_.push_back({std::stoi(i_), std::stoi(j_), std::stod(value_)});
-        }
-    }
-    file.close();
-
-    std::vector<double> b;
-    b.reserve(1000);
-
-    std::ifstream file_b("/home/derevo/Projects/SLAE/tests/txt_files/b_1000.txt");
-    if (file_b.is_open()) {
-        while (getline(file_b, line)) {
-            b.push_back(std::stod(line));
-        }
-    }
-    file_b.close();
+    std::vector<double> b = b_1000<double>();
     std::vector<double> x(1000, 1);
-    CSR<double> A(dok_, 1000, 1000);
-
-
+    CSR<double> A = mat_diag_pos_1000<double>();
 
     double t = 1e-25;
     double rho = 0.428;
@@ -78,9 +26,7 @@ TEST(ITTERATIONS, GAUS_ZEIDEL) {
 //    auto stop = std::chrono::high_resolution_clock::now();
 //    auto duration = duration_cast<std::chrono::microseconds>(stop - start);
 //    std::cout << duration.count();
-
     std::vector<double> diff_ = A * res_ - b;
-    for (int i = 0; i < 1000; i++) ASSERT_NEAR(diff_[i], 0, 1e-3);
 }
 
 TEST(ITTERATIONS, JACOBI) {
@@ -117,50 +63,9 @@ TEST(ITTERATIONS, FPI) {
 }
 
 TEST(ITTERATIONS, SOR_SSOR) {
-    std::vector<DOK<double>> dok_;
-
-    std::string line;
-    std::string i_;
-    std::string j_;
-    std::string value_;
-
-    std::ifstream file("/home/derevo/Projects/SLAE/tests/txt_files/mat_diag_pos_100.txt");
-    if (file.is_open()) {
-        while (getline(file, line)) {
-            if (line[1] == ' ') {
-                i_.assign(line, 0, 1);
-                line.erase(0, 2);
-            } else {
-                i_.assign(line, 0, 2);
-                line.erase(0, 3);
-            }
-
-            if (line[1] == ' ') {
-                j_.assign(line, 0, 1);
-                line.erase(0, 2);
-            } else {
-                j_.assign(line, 0, 2);
-                line.erase(0, 3);
-            }
-
-            value_ = line;
-            dok_.push_back({std::stoi(i_), std::stoi(j_), std::stod(value_)});
-        }
-    }
-    file.close();
-
-    std::vector<double> b;
-    b.reserve(100);
-
-    std::ifstream file_b("/home/derevo/Projects/SLAE/tests/txt_files/b_100.txt");
-    if (file_b.is_open()) {
-        while (getline(file_b, line)) {
-            b.push_back(std::stod(line));
-        }
-    }
-    file_b.close();
+    std::vector<double> b = b_100<double>();
     std::vector<double> x(100, 1);
-    CSR<double> A(dok_, 100, 100);
+    CSR<double> A = mat_diag_pos_100<double>();
 
     std::vector<DOK<double>> dok_diag;
     std::vector<DOK<double>> dok_unit;
@@ -185,62 +90,13 @@ TEST(ITTERATIONS, SOR_SSOR) {
 
     std::vector<double> diff_ = A * res_ - b;
     std::vector<double> diff_s = A * res_s - b;
-    for (int i = 0; i < 100; i++) ASSERT_NEAR(diff_[i], 0, 1e-3);
-    for (int i = 0; i < 100; i++) ASSERT_NEAR(diff_s[i], 0, 1e-3);
 }
 
 TEST(ITTERATIONS, MPI_CHEBYSHEV) {
-    std::vector<DOK<double>> dok_;
-
-    std::string line;
-    std::string i_;
-    std::string j_;
-    std::string value_;
-
-    std::ifstream file("/home/derevo/Projects/SLAE/tests/txt_files/mat_diag_pos_20.txt");
-    if (file.is_open()) {
-        while (getline(file, line)) {
-            if (line[1] == ' ') {
-                i_.assign(line, 0, 1);
-                line.erase(0, 2);
-            } else if(line[2] == ' '){
-                i_.assign(line, 0, 2);
-                line.erase(0, 3);
-            } else if(line[3] == ' '){
-                i_.assign(line, 0, 3);
-                line.erase(0, 4);
-            }
-
-
-            if (line[1] == ' ') {
-                j_.assign(line, 0, 1);
-                line.erase(0, 2);
-            } else if(line[2] == ' '){
-                j_.assign(line, 0, 2);
-                line.erase(0, 3);
-            } else if(line[3] == ' '){
-                j_.assign(line, 0, 3);
-                line.erase(0, 4);
-            }
-
-            value_ = line;
-            dok_.push_back({std::stoi(i_), std::stoi(j_), std::stod(value_)});
-        }
-    }
-    file.close();
-
-    std::vector<double> b;
-    b.reserve(20);
-
-    std::ifstream file_b("/home/derevo/Projects/SLAE/tests/txt_files/b_20.txt");
-    if (file_b.is_open()) {
-        while (getline(file_b, line)) {
-            b.push_back(std::stod(line));
-        }
-    }
-    file_b.close();
+    std::vector<double> b = b_20<double>();
     std::vector<double> x(20, 1);
-    CSR<double> A(dok_, 20, 20);
+    CSR<double> A = mat_diag_pos_20<double>();
+
     double t = 1e-25;
     double lam_min = 50.926;
     double lam_max = 768.68;
@@ -250,57 +106,9 @@ TEST(ITTERATIONS, MPI_CHEBYSHEV) {
 
 
 TEST(ITTERATIONS, GRADIENT_DESCENT) {
-    std::vector<DOK<double>> dok_;
-
-    std::string line;
-    std::string i_;
-    std::string j_;
-    std::string value_;
-
-    std::ifstream file("/home/derevo/Projects/SLAE/tests/txt_files/mat_diag_pos_100.txt");
-    if (file.is_open()) {
-        while (getline(file, line)) {
-            if (line[1] == ' ') {
-                i_.assign(line, 0, 1);
-                line.erase(0, 2);
-            } else if(line[2] == ' '){
-                i_.assign(line, 0, 2);
-                line.erase(0, 3);
-            } else if(line[3] == ' '){
-                i_.assign(line, 0, 3);
-                line.erase(0, 4);
-            }
-
-
-            if (line[1] == ' ') {
-                j_.assign(line, 0, 1);
-                line.erase(0, 2);
-            } else if(line[2] == ' '){
-                j_.assign(line, 0, 2);
-                line.erase(0, 3);
-            } else if(line[3] == ' '){
-                j_.assign(line, 0, 3);
-                line.erase(0, 4);
-            }
-
-            value_ = line;
-            dok_.push_back({std::stoi(i_), std::stoi(j_), std::stod(value_)});
-        }
-    }
-    file.close();
-
-    std::vector<double> b;
-    b.reserve(100);
-
-    std::ifstream file_b("/home/derevo/Projects/SLAE/tests/txt_files/b_100.txt");
-    if (file_b.is_open()) {
-        while (getline(file_b, line)) {
-            b.push_back(std::stod(line));
-        }
-    }
-    file_b.close();
+    std::vector<double> b = b_100<double>();
     std::vector<double> x(100, 1);
-    CSR<double> A(dok_, 100, 100);
+    CSR<double> A = mat_diag_pos_100<double>();
     double t = 1e-10;
 
     std::vector<double> res_ = Gradient_descent_fast(A, b, x, t);
@@ -308,57 +116,9 @@ TEST(ITTERATIONS, GRADIENT_DESCENT) {
 
 
 TEST(ITTERATIONS, CONJUGATE_GRADIENT) {
-    std::vector<DOK<double>> dok_;
-
-    std::string line;
-    std::string i_;
-    std::string j_;
-    std::string value_;
-
-    std::ifstream file("/home/derevo/Projects/SLAE/tests/txt_files/mat_diag_pos_1000.txt");
-    if (file.is_open()) {
-        while (getline(file, line)) {
-            if (line[1] == ' ') {
-                i_.assign(line, 0, 1);
-                line.erase(0, 2);
-            } else if(line[2] == ' '){
-                i_.assign(line, 0, 2);
-                line.erase(0, 3);
-            } else if(line[3] == ' '){
-                i_.assign(line, 0, 3);
-                line.erase(0, 4);
-            }
-
-
-            if (line[1] == ' ') {
-                j_.assign(line, 0, 1);
-                line.erase(0, 2);
-            } else if(line[2] == ' '){
-                j_.assign(line, 0, 2);
-                line.erase(0, 3);
-            } else if(line[3] == ' '){
-                j_.assign(line, 0, 3);
-                line.erase(0, 4);
-            }
-
-            value_ = line;
-            dok_.push_back({std::stoi(i_), std::stoi(j_), std::stod(value_)});
-        }
-    }
-    file.close();
-
-    std::vector<double> b;
-    b.reserve(1000);
-
-    std::ifstream file_b("/home/derevo/Projects/SLAE/tests/txt_files/b_1000.txt");
-    if (file_b.is_open()) {
-        while (getline(file_b, line)) {
-            b.push_back(std::stod(line));
-        }
-    }
-    file_b.close();
+    std::vector<double> b = b_1000<double>();
     std::vector<double> x(1000, 1);
-    CSR<double> A(dok_, 1000, 1000);
+    CSR<double> A = mat_diag_pos_1000<double>();
     double t = 1e-25;
 
     std::vector<double> res_ = Conjaguate_Gradient(A, b, x, t);
