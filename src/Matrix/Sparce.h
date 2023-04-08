@@ -152,10 +152,10 @@ public:
         T lambda;
         for(int i = 0; i < 100; i ++)
         {
-            //lambda = scalar(r, (*this) * r) / scalar(r, r);
-            //std::cout << lambda << "\n";
+            lambda = scalar(r, (*this) * r) / scalar(r, r);
             r = (*this) * r * (static_cast<T>(1) / norm((*this) * r));
         }
+        return lambda;
     }
 
     friend std::ostream &operator<<(std::ostream &out, const CSR<T> &matrix) {

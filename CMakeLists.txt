@@ -14,6 +14,8 @@ add_subdirectory(tests)
 
 add_subdirectory(KR1/4)
 add_subdirectory(KR1/3)
+add_subdirectory(KR2/task1)
+
 
 
 

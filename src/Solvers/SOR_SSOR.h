@@ -1,6 +1,8 @@
 #ifndef SLAE_SOR_SSOR_H
 #define SLAE_SOR_SSOR_H
 
+
+#include <fstream>
 #include "../Matrix/Sparce.h"
 
 template<typename T>
@@ -10,7 +12,7 @@ std::vector<T> SOR(const CSR<T> &A, const std::vector<T> &b, const std::vector<T
         for (int i = 0; i < x.size(); i++) {
             T sum = b[i];
             for (int j = 0; j < A.get_row(i + 1) - A.get_row(i); j++)
-                if (i != j)
+                if (i != A.get_col(A.get_row(i) + j))
                     sum -= A.get_value(A.get_row(i) + j) * x[A.get_col(A.get_row(i) + j)];
             x[i] = (1 - w) * x[i] + w * sum / A(i, i);
         }
@@ -18,14 +20,22 @@ std::vector<T> SOR(const CSR<T> &A, const std::vector<T> &b, const std::vector<T
     return x;
 }
 
+
 template<typename T>
 std::vector<T> SSOR(const CSR<T> &A, const std::vector<T> &b, const std::vector<T> &x0, T tolerance, T w) {
     std::vector<T> x = x0;
+
+    std::ofstream out;
+    out.open("Residual(iterations number)");
+    std::vector<T> r = A * x - b;
+    int count = 1;
+
     while (!stop_check(A, x, b, tolerance)) {
+        out << count << " " << norm(r) << "\n";
         for (int i = 0; i < x.size(); i++) {
             T sum = b[i];
             for (int j = 0; j < A.get_row(i + 1) - A.get_row(i); j++)
-                if (i != j)
+                if (i != A.get_col(A.get_row(i) + j))
                     sum -= A.get_value(A.get_row(i) + j) * x[A.get_col(A.get_row(i) + j)];
             x[i] = (1 - w) * x[i] + w * sum / A(i, i);
         }
@@ -33,12 +43,16 @@ std::vector<T> SSOR(const CSR<T> &A, const std::vector<T> &b, const std::vector<
         for (int i = x.size() - 1; i > 0; i--) {
             T sum = b[i];
             for (int j = 0; j < A.get_row(i + 1) - A.get_row(i); j++)
-                if (i != j)
+                if (i != A.get_col(A.get_row(i) + j))
                     sum -= A.get_value(A.get_row(i) + j) * x[A.get_col(A.get_row(i) + j)];
             x[i] = (1 - w) * x[i] + w * sum / A(i, i);
         }
 
+        count ++;
+        r = A * x - b;
     }
+
+    out.close();
     return x;
 }
 

@@ -1,7 +1,9 @@
 #ifndef SLAE_GAUS_ZEIDEL_H
 #define SLAE_GAUS_ZEIDEL_H
 
+#include <fstream>
 #include "../Matrix/Sparce.h"
+
 
 
 template<typename T>
@@ -78,11 +80,16 @@ Gaus_Zeidel_accelerated(const CSR<T> &A, const std::vector<T> &b, const std::vec
     std::vector<T> x1 = Gaus_Zeidel_Sym_it(A, b, x0);
     std::vector<T> x2 = Gaus_Zeidel_Sym_it(A, b, x1);
     x1 = x2;
+    std::vector<double> r = A * x2 - b;
 
     T mu0 = 1;
     T mu1 = 1 / rho;
     T mu2 = 2 * mu1 / rho - mu0;
-    int count = 0;
+
+    int count = 1;
+    std::ofstream out;
+    out.open("Residual(iterations number)");
+    out << count << " " << norm(r) << "\n";
 
     while (!stop_check(A, x2, b, tolerance)) {
         x2 = x1 * (2 * mu1 / (rho * mu2)) - x0 * (mu0 / mu2);
@@ -92,6 +99,8 @@ Gaus_Zeidel_accelerated(const CSR<T> &A, const std::vector<T> &b, const std::vec
         mu1 = mu2;
         mu2 = 2 * mu1 / rho - mu0;
         count++;
+        r = A * x2 - b;
+        out << count << " " << norm(r) << "\n";
     }
     std::cout << count << "\n";
 

@@ -1,6 +1,7 @@
 #ifndef SLAE_FPI_H
 #define SLAE_FPI_H
 
+#include <fstream>
 #include "../Matrix/Sparce.h"
 #include "Chebyshev.h"
 
@@ -9,11 +10,19 @@ template<typename T>
 std::vector<T> FPI(const CSR<T> &A, const std::vector<T> &b, const std::vector<T> &x0, T tolerance, T tau) {
     std::vector<T> x = x0;
     std::vector<T> x_1 = x;
+    std::vector<T> r = A * x - b;
+    int count = 1;
+    std::ofstream out;
+    out.open("Residual(iterations number)");
     while (!stop_check(A, x_1, b, tolerance)) {
+        out << count << " " << norm(r) << "\n";
         x = x_1;
         x_1 = x - (A * x - b) * tau;
+        r = A * x - b;
+        count ++;
 
     }
+    out.close();
     return x_1;
 }
 
@@ -29,11 +38,20 @@ FPI_Chebyshev_accelerated(const CSR<T> &A, const std::vector<T> &b, const std::v
     std::vector<T> roots_ = MPI_Cheb_solutions(sol_, tau_dist, lam_max, lam_min);
 
     int count = 0;
+    std::ofstream out;
+    out.open("Residual(iterations number)");
+    int i = 1;
+    std::vector<double> r;
     while (!stop_check(A, x_1, b, tolerance)) {
         x = x_1;
         x_1 = x - (A * x - b) * roots_[count];
-        if(count + 1 == it) count = 0;
+        count ++;
+        if(count == it) count = 0;
+        r = A * x - b;
+        out << i << " " << norm(r) << "\n";
+        i ++;
     }
+    out.close();
     return x_1;
 }
 
