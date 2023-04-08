@@ -36,7 +36,7 @@ with open('des_4') as f4:
 
 
 
-fig, ax = plt.subplots(figsize=(16, 10), dpi=50)
+fig, ax = plt.subplots(figsize=(16, 10), dpi=150)
 
 fig.suptitle("Log of residual from iterations number",
              fontsize='xx-large')
