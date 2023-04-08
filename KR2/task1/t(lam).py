@@ -16,11 +16,11 @@ fig.suptitle("Time from Lmax-Lmin",
              fontsize='xx-large')
 
 plt.grid(True)
-ax.scatter(lam, t)
+ax.scatter(lam + 12.18, t)
 
 
 ax.legend(loc='best', fontsize=12)
-plt.ylabel('Lmax-Lmin', fontsize=14)
-plt.xlabel('Time, $\mu s$', fontsize=14)
+plt.xlabel('Lmax-Lmin', fontsize=14)
+plt.ylabel('Time, $\mu s$', fontsize=14)
 plt.savefig("T(lam).png")
 plt.show()

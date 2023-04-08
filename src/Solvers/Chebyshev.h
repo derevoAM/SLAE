@@ -32,7 +32,7 @@ std::vector<int> tau_distrib(int n) {
 }
 
 template<typename T>
-std::vector<T> MPI_Cheb_solutions(std::vector<T>& sol_, std::vector<int>& order_, T lam_max, T lam_min) {
+std::vector<T> MPI_Cheb_solutions(const std::vector<T>& sol_, const std::vector<int>& order_, T lam_max, T lam_min) {
     std::vector<T> res_(sol_.size());
     for(int i = 0; i < sol_.size(); i ++)
     {

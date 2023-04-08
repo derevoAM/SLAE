@@ -42,7 +42,7 @@ template<typename T>
 T norm(const std::vector<T> &vec_) {
     T res_ = 0;
     for (int i = 0; i < vec_.size(); i++) res_ += vec_[i] * vec_[i];
-    return res_;
+    return std::sqrt(res_);
 }
 
 template<typename T>
