@@ -23,6 +23,14 @@ std::vector<T> operator*(const std::vector<T> &vec_1_, T mult_) {
 }
 
 template<typename T>
+std::vector<T> operator/(const std::vector<T> &vec_1_, T mult_) {
+    std::vector<T> res_;
+    res_.reserve(vec_1_.size());
+    for (int i = 0; i < vec_1_.size(); i++) res_.push_back(vec_1_[i] / mult_);
+    return res_;
+}
+
+template<typename T>
 T scalar(const std::vector<T> &mult_1, const std::vector<T> &mult_2)
 {
     T sum = 0;

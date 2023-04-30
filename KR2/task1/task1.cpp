@@ -51,27 +51,27 @@ int main()
     double t = 1e-13;
 
 
-    std::vector<double> res_1 = FPI(A, c, x0, t, 1 / lam_max);
-    std::vector<double> res_2 = FPI(A, c, x0, t, 2 / (lam_max + lam_min));
+//    std::vector<double> res_1 = FPI(A, c, x0, t, 1 / lam_max);
+//    std::vector<double> res_2 = FPI(A, c, x0, t, 2 / (lam_max + lam_min));
     std::vector<double> res_3 = FPI_Chebyshev_accelerated(A, c, x0, t, lam_max, lam_min, 8);
-    std::vector<double> res_4 = SSOR(A, c, x0, t, 1.02);
-
-    std::ofstream out;
-    out.open("speed1");
-
-    double i = -10;
-    while(i < 800)
-    {
-        auto start = std::chrono::high_resolution_clock::now();
-
-        std::vector<double> res_5 = FPI_Chebyshev_accelerated(A, c, x0, t, lam_max  + i, lam_min, 8);
-
-        auto stop = std::chrono::high_resolution_clock::now();
-        auto duration = duration_cast<std::chrono::microseconds>(stop - start);
-        out << duration.count() << "\n";
-
-        i += 0.5;
-    }
-    out.close();
+//    std::vector<double> res_4 = SSOR(A, c, x0, t, 1.02);
+//
+//    std::ofstream out;
+//    out.open("speed1");
+//
+//    double i = -10;
+//    while(i < 800)
+//    {
+//        auto start = std::chrono::high_resolution_clock::now();
+//
+//        std::vector<double> res_5 = FPI_Chebyshev_accelerated(A, c, x0, t, lam_max  + i, lam_min, 8);
+//
+//        auto stop = std::chrono::high_resolution_clock::now();
+//        auto duration = duration_cast<std::chrono::microseconds>(stop - start);
+//        out << duration.count() << "\n";
+//
+//        i += 0.5;
+//    }
+//    out.close();
 
 }

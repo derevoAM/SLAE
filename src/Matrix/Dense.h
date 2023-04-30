@@ -38,6 +38,21 @@ public:
         return Dense<T>{h_, mult_.w_, result_};
     }
 
+    std::vector<T>  operator*(const std::vector<T> &mult_) const {
+        std::vector<T> result_;
+        result_.reserve(mult_.size());
+        for (int i = 0; i < h_; i++) {
+            T sum = static_cast<T>(0);
+            for (int k = 0; k < mult_.size(); k++) {
+
+                sum += matrix_[i * w_ + k] * mult_[k];
+
+            }
+            result_.push_back(sum);
+        }
+        return result_;
+    }
+
     Dense<T> operator*(T mult_) {
         std::vector<T> result_;
         result_.reserve(h_ * w_);

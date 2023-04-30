@@ -16,7 +16,7 @@ std::vector<T> Chebyshev_solutions(int n) {
         solutions_[i] = solutions_[i - 1] * cosa - sinb * sina;
         sinb = solutions_[i - 1] * sina + sinb * cosa;
     }
-    //std::cout << solutions_;
+    std::cout << solutions_ << "\n";
     return solutions_;
 }
 
@@ -28,6 +28,8 @@ std::vector<int> tau_distrib(int n) {
             order_[n * (j * 2 + 1) / (2 * i)] = 2 * i  + 1 - order_[n * 2 * j / (2 * i)];
         }
     }
+    std::cout << order_ << "\n";
+
     return order_;
 }
 

@@ -178,6 +178,53 @@ CSR<T> mat_diag_pos_20()
     return CSR<double>(dok_, 20, 20);
 }
 
+
+template<typename T>
+CSR<T> mat_20()
+{
+    std::vector<DOK<double>> dok_;
+
+    std::string line;
+    std::string i_;
+    std::string j_;
+    std::string value_;
+
+    std::ifstream file("/home/derevo/Projects/SLAE/tests/txt_files/mat_20.txt");
+    if (file.is_open()) {
+        while (getline(file, line)) {
+            if (line[1] == ' ') {
+                i_.assign(line, 0, 1);
+                line.erase(0, 2);
+            } else if(line[2] == ' '){
+                i_.assign(line, 0, 2);
+                line.erase(0, 3);
+            } else if(line[3] == ' '){
+                i_.assign(line, 0, 3);
+                line.erase(0, 4);
+            }
+
+
+            if (line[1] == ' ') {
+                j_.assign(line, 0, 1);
+                line.erase(0, 2);
+            } else if(line[2] == ' '){
+                j_.assign(line, 0, 2);
+                line.erase(0, 3);
+            } else if(line[3] == ' '){
+                j_.assign(line, 0, 3);
+                line.erase(0, 4);
+            }
+
+            value_ = line;
+            dok_.push_back({std::stoi(i_), std::stoi(j_), std::stod(value_)});
+        }
+    }
+    file.close();
+
+    return CSR<double>(dok_, 20, 20);
+}
+
+
 template<typename T>
 std::vector<T> b_20()
 {

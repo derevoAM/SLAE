@@ -52,6 +52,7 @@ FPI_Chebyshev_accelerated(const CSR<T> &A, const std::vector<T> &b, const std::v
         x_1 = x - (A * x - b) * roots_[count];
         count ++;
         if(count == it) count = 0;
+
         r = A * x - b;
 //        out << x_1[0] << " " << x_1[3] << "\n";
         i ++;
