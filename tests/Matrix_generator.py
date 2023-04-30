@@ -7,6 +7,7 @@ with open('txt_files/mat_20.txt', 'w') as file:
         for j in range(20):
             file.write('{} {} {:.3f} \n'.format(i, j, mat_[i, j]))
 
+print(np.linalg.det(mat_))
 b_ = np.random.random(20)
 
 with open('txt_files/b_20.txt', 'w') as file:

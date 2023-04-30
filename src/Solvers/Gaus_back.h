@@ -15,9 +15,6 @@ std::vector<T> Gaus_back(const Dense<T> &A, const std::vector<T> &b) {
         x[i] = sum / A(i, i);
         //std::cout << sum << "\n";
     }
-    std::vector<T> y = A * x - b;
-    T r = norm(y);
-    std::cout << r << "\n";
     return x;
 }
 
